@@ -58,6 +58,21 @@
         h3 {
             margin-bottom: 20px;
         }
+        
+        .log-entry.warning {
+        border-left-color: orange;
+        }
+        .log-entry.success {
+        border-left-color: limegreen;
+        }
+        
+        .log-entry.danger {
+        border-left-color: red;
+        }
+        
+        .log-entry.info {
+        border-left-color: #17a2b8;
+        }
     </style>
 </head>
 
@@ -106,8 +121,8 @@
         const logs = document.getElementById("logs");
 
         const logEntry = document.createElement("div");
-        logEntry.classList.add("log-entry");
-
+        logEntry.classList.add("log-entry", data.type || "info");
+        
         logEntry.innerHTML = `
             <div>${data.message}</div>
             <div class="log-time">${data.time}</div>
