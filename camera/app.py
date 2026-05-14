@@ -6,7 +6,7 @@ import threading
 import time
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 
 # Camera storage
 cameras = {
@@ -15,7 +15,7 @@ cameras = {
 
 def find_camera(id):
     try:
-        return cameras[int(id)]
+        return cameras.get(int(id))
     except:
         return None
 
@@ -33,7 +33,7 @@ def gen_frames(camera_id):
         success, frame = cap.read()
 
         if not success:
-            break
+            continue
 
         else:
             ret, buffer = cv2.imencode('.jpg', frame)
