@@ -65,30 +65,33 @@ def video_feed(id):
 def generate_logs():
 
     sample_logs = [
-        "Motion detected at Camera 1",
-        "Unauthorized access attempt",
-        "Camera connection stable",
-        "Person detected in restricted area",
-        "Face recognition triggered",
-        "Low light detected",
-        "System scan completed",
-        "Object movement detected"
+        {"message": "Motion detected at Camera 1", "type": "warning"},
+        {"message": "Unauthorized access attempt", "type": "danger"},
+        {"message": "Camera connection stable", "type": "success"},
+        {"message": "Person detected in restricted area", "type": "warning"},
+        {"message": "Face recognition triggered", "type": "info"},
+        {"message": "Low light detected", "type": "warning"},
+        {"message": "System scan completed", "type": "success"},
+        {"message": "Object movement detected", "type": "info"}
     ]
 
     while True:
 
+        current_log = sample_logs[int(time.time()) % len(sample_logs)]
+
         log = {
-            "message": sample_logs[int(time.time()) % len(sample_logs)],
+            "message": current_log["message"],
+            "type": current_log["type"],
             "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
 
         socketio.emit('new_log', log)
 
         time.sleep(3)
-
+        
 # START BACKGROUND THREAD
 
-threading.Thread(target=generate_logs, daemon=True).start()
+socketio.start_background_task(generate_logs)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)
