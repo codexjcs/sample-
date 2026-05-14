@@ -52,9 +52,8 @@ def gen_frames(camera_id):
 def index():
     return render_template('index.html')
 
-@app.route('/video_feed/<string:id>/')
+@app.route('/video_feed/<int:id>/')
 def video_feed(id):
-
     return Response(
         gen_frames(id),
         mimetype='multipart/x-mixed-replace; boundary=frame'
@@ -91,7 +90,13 @@ def generate_logs():
         
 # START BACKGROUND THREAD
 
-socketio.start_background_task(generate_logs)
+socketio.start_background_task(target=generate_logs)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)
+    if __name__ == '__main__':
+    socketio.run(
+        app,
+        host='0.0.0.0',
+        port=5000,
+        allow_unsafe_werkzeug=True
+    )
