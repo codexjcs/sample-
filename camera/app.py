@@ -93,7 +93,6 @@ def generate_logs():
 socketio.start_background_task(target=generate_logs)
 
 if __name__ == '__main__':
-    if __name__ == '__main__':
     socketio.run(
         app,
         host='0.0.0.0',
