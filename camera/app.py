@@ -6,7 +6,7 @@ import threading
 import time
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading", logger=True, engineio_logger=True)
 
 # Camera storage
 cameras = {
