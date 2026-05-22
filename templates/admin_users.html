@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="10">
+  <title>Admin — Manage Users</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Navigation -->
+  <div class="nav">
+    <a href="/"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    <a href="/logs"><i class="fa-solid fa-clock-rotate-left"></i> Activity Logs</a>
+    <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </div>
+
+  <!-- Header -->
+  <div class="card">
+    <h1>MANAGE USERS</h1>
+    <div class="subtitle">Administrator access — manage user accounts and permissions</div>
+    <p>Total Users: <strong>{{ users | length }}</strong></p>
+  </div>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="message {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- Users Table -->
+  <div class="card table-wrapper">
+    <table>
+      <tr>
+        <th>#</th>
+        <th>USERNAME</th>
+        <th>EMAIL</th>
+        <th>ROLE</th>
+        <th>CREATED (PHT)</th>
+        <th>ACTIONS</th>
+      </tr>
+
+      {% for user in users %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+
+        <td>
+          {% if user.is_admin %}
+            <span class="badge-admin">ADMIN</span>
+          {% else %}
+            <span class="badge-user">USER</span>
+          {% endif %}
+        </td>
+
+        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+
+        <td>
+          {% if user.id == current_user.id %}
+            <button class="btn btn-self" disabled>You</button>
+          {% else %}
+            <form method="POST"
+                  action="/admin/delete_user/{{ user.id }}"
+                  style="display:inline"
+                  onsubmit="return confirm('Delete {{ user.username }}? This cannot be undone.')">
+              <button class="btn btn-delete" type="submit">Delete</button>
+            </form>
+
+            {% if not user.is_admin %}
+            <form method="POST"
+                  action="/admin/promote/{{ user.id }}"
+                  style="display:inline"
+                  onsubmit="return confirm('Promote {{ user.username }} to admin?')">
+              <button class="btn btn-promote" type="submit">Make Admin</button>
+            </form>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
